@@ -9,9 +9,10 @@ import config
 
 
 def test_manifest():
+
     manifest_location = os.path.join(config.SRC, 'manifest.json')
     with open(manifest_location, 'r') as f:
-        return json.load(f)
+        manifest = json.load(f)
 
     base_ref = os.environ['BASE_REF']
     prev_manifest  = '__prev_manifest.json'
