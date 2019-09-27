@@ -19,10 +19,8 @@ jobs:
       with:
         python-version: 3.7
     - name: Release
-      working-directory:
-        .github/workflows
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        USER_REPO_NAME: ${{ github.repository }}
       run: |
-        pip install invoke
-        inv release ${{ github.repository }}
+        python tasks.py release

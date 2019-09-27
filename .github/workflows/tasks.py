@@ -3,7 +3,6 @@
 import os
 import sys
 import subprocess
-from invoke import task
 
 sys.path.insert(0, '.github/workflow')
 import config
@@ -30,14 +29,16 @@ def load_version():
         return json.load(f)['version']
 
 
-@task
-def release(c, user_repo_name):
+def release():
+    token = os.environ['GITHUB_TOKEN']
+    user_repo_name = os.environ['USER_REPO_NAME']
+
     version_tag = load_version()
     output = 'build'
     asset_filenames = config.deploy(output)
     asset_paths = [os.path.join(output, name) for name in asset_filenames]
 
-    c.run(
+    _run(
         f'hub release create {version_tag}'
         f'-m {RELEASE_TITLE.format(version_tag)}\n{RELEASE_DESC.format(version_tag)}'
         f'-a {" -a ".join(asset_paths)}'
@@ -59,7 +60,6 @@ def release(c, user_repo_name):
     with open(RELEASE_FILE, 'w') as f:
         json.dump(data, f, indent=4)
 
-    token = os.environ['GITHUB_TOKEN']
     _run(f'git status')
     _run(f'git remote set-url origin https://{FOG}:{token}@github.com/{user_repo_name}.git')
     _run(f'git add {RELEASE_FILE}')
