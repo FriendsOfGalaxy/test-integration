@@ -1,6 +1,7 @@
 """Common tasks shared between all our forks"""
 
 import os
+import json
 import sys
 import subprocess
 
@@ -20,6 +21,7 @@ def _run(*args, **kwargs):
     kwargs.setdefault("check", True)
     kwargs.setdefault("capture_output", False)
     cmd = list(args)
+    # print('executing', cmd)
     return subprocess.run(cmd, **kwargs)
 
 
@@ -35,6 +37,8 @@ def release():
 
     version_tag = load_version()
     output = 'build'
+
+    print('preparing deploy files')
     asset_filenames = config.deploy(output)
     asset_paths = [os.path.join(output, name) for name in asset_filenames]
 
