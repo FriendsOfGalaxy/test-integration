@@ -64,3 +64,9 @@ def release():
     _run(f'git remote set-url origin https://{FOG}:{token}@github.com/{user_repo_name}.git')
     _run(f'git add {RELEASE_FILE}')
     _run(f'git commit -m {RELEASE_FILE_COMMIT_MESSAGE}')
+
+
+if __name__ == "__main__":
+    task = sys.argv[1]
+    if task == 'release':
+        release()
