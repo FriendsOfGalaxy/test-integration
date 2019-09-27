@@ -4,11 +4,14 @@ import sys
 import subprocess
 from distutils.version import StrictVersion
 
+sys.path.insert(0, '.github/workflow')
+import config
+
 
 def test_manifest():
-    manifest_location = os.environ['SRC'] + os.sep + 'manifest.json'
+    manifest_location = os.path.join(config.SRC, 'manifest.json')
     with open(manifest_location, 'r') as f:
-        manifest = json.load(f)
+        return json.load(f)
 
     base_ref = os.environ['BASE_REF']
     prev_manifest  = '__prev_manifest.json'
