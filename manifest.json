@@ -1,0 +1,11 @@
+{
+    "name": "Test Galaxy Integration",
+    "platform": "generic",
+    "guid": "4a0bcfb3-3d52-4c1b-bd93-028c39206449",
+    "version": "0.1",
+    "description": "For testing purposes",
+    "author": "FriendsOfGalaxy",
+    "email": "FriendsOfGalaxy@gmail.com",
+    "url": "https://github.com/FriendsOfGalaxy/test-integration-fork",
+    "script": "plugin.py"
+}
