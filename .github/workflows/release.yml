@@ -13,29 +13,22 @@ jobs:
 
     steps:
     - uses: actions/checkout@v1
+
     - name: Set up Python 3.7
       uses: actions/setup-python@v1
       with:
         python-version: 3.7
 
+    - name: Install hub
+      uses: geertvdc/setup-hub@master
+
     - name: Release
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        # GITHUB_USER: ${{ secrets.GITHUB_USER }}
       run: |
-        sudo snap install hub --classic
-        hub --help
         python .github/workflows/tasks.py package > ../release_info
         hub release create $VERSION -F ../release_info -a ../build/windows.zip
-
-    # - name: Release Assets
-    #   uses: softprops/action-gh-release@v1
-    #   with:
-    #     name: Release version $(cat ../version)
-    #     file: Version $VERSION
-    #     files: ../assets/*
-    #   env:
-    #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-    #     VERSION: ${cat ../version}
 
     - name: Update Release File
       env:
