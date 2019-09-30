@@ -23,6 +23,7 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: |
         sudo snap install hub --classic
+        hub --help
         python .github/workflows/tasks.py package > ../release_info
         hub release create $VERSION -F ../release_info -a ../build/windows.zip
 
