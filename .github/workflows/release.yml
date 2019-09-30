@@ -23,9 +23,9 @@ jobs:
       run: python .github/workflows/tasks.py package
 
     - name: Dump steps context
-        env:
-          STEPS_CONTEXT: ${{ toJson(steps) }}
-        run: echo "$STEPS_CONTEXT"
+      env:
+        STEPS_CONTEXT: ${{ toJson(steps) }}
+      run: echo "$STEPS_CONTEXT"
 
     # - name: Release Assets
     #   uses: softprops/action-gh-release@v1
