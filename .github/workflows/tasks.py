@@ -1,6 +1,7 @@
 """Common tasks shared between all our forks"""
 
 import os
+import pathlib
 import json
 import sys
 import subprocess
@@ -39,27 +40,33 @@ def load_version():
 def package():
     """Setup env variable VERSION and """
     version_tag = load_version()
-    asset_paths = config.package(BUILD_DIR)
+    config.package(BUILD_DIR)
 
-    os.environ['VERSION'] = version_tag
-    # _run('git', 'tag', version_tag)
-    # # to pass arguments to release step
-    info = RELEASE_MESSAGE.format(tag=version_tag)
-    print(info)
+    asset_cmd = []
+    for _, _, filenames in os.walk(BUILD_DIR):
+        break
+    for filename in filenames:
+        asset_cmd.append('-a')
+        asset_cmd.append(str(pathlib.Path(BUILD_DIR).absolute() / filename))
 
-    # Release with hub
+    # Create and upload github tag and release
     _run('hub', 'release', 'create', version_tag,
         '-m', RELEASE_MESSAGE.format(tag=version_tag),
-        '-a', " -a ".join(asset_paths)
+        *asset_cmd
     )
 
 def update_release_file():
-    token = os.environ['GITHUB_TOKEN']
-    user_repo_name = os.environ['USER_REPO_NAME']
+    # token = os.environ['GITHUB_TOKEN']
+    token=''
+    # user_repo_name = os.environ['USER_REPO_NAME']
+    user_repo_name=FOG + '/test-integration-fork'
     version_tag = load_version()
 
     assets = []
-    for _, _, filename in os.walk(BUILD_DIR):
+    for _, _, filenames in os.walk(BUILD_DIR):
+        break
+
+    for filename in filenames:
         url = f"https://github.com/{user_repo_name}/releases/download/{version_tag}/{filename}"
         asset = {
             "browser_download_url": url,
@@ -71,19 +78,22 @@ def update_release_file():
         "tag_name": version_tag,
         "assets": assets
     }
-    print(data)
     with open(RELEASE_FILE, 'w') as f:
         json.dump(data, f, indent=4)
 
-    _run('git', 'status')
     _run('git', 'remote', 'set-url', 'origin', f'https://{FOG}:{token}@github.com/{user_repo_name}.git')
     _run('git', 'add', RELEASE_FILE)
+    _run('git', 'status')
     _run('git', 'commit', '-m', RELEASE_FILE_COMMIT_MESSAGE)
+    _run('git', 'push', 'origin', 'master')
 
 
 if __name__ == "__main__":
     task = sys.argv[1]
+
     if task == 'package':
         package()
-    if task == 'update_release_file':
+    elif task == 'update_release_file':
         update_release_file()
+    else:
+        raise RuntimeError('unknown command' + task)

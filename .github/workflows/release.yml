@@ -25,7 +25,6 @@ jobs:
     - name: Release
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        # GITHUB_USER: ${{ secrets.GITHUB_USER }}
       run: |
         python .github/workflows/tasks.py package
 
