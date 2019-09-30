@@ -19,7 +19,7 @@ BUILD_DIR = os.path.join('..', 'assets')
 def _run(*args, **kwargs):
     kwargs.setdefault("check", True)
     # kwargs.setdefault("capture_output", False)
-    kwargs.setdefault(stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+    kwargs.setdefault('stdout', subprocess.PIPE, 'stderr', subprocess.STDOUT)
     cmd = list(args)
     print('executing', cmd)
     return subprocess.run(cmd, **kwargs)

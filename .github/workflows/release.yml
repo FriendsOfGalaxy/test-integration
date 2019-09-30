@@ -21,6 +21,7 @@ jobs:
     - name: Release
       run: |
         sudo snap install hub --classic
+        hub --help
         python .github/workflows/tasks.py package > ../release_info.txt
 
     # - name: Release Assets
