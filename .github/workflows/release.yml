@@ -27,9 +27,7 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         # GITHUB_USER: ${{ secrets.GITHUB_USER }}
       run: |
-        python .github/workflows/tasks.py package > ../release_info
-        echo $VERSION
-        hub release create $VERSION -F ../release_info -a ../build/windows.zip
+        python .github/workflows/tasks.py package
 
     - name: Update Release File
       env:
