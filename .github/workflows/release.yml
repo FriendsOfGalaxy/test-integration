@@ -28,11 +28,11 @@ jobs:
     #   run: |
     #     python .github/workflows/tasks.py release
 
-    - uses: actions/checkout@v1
-      with:
-        token: ${{ secrets.GITHUB_TOKEN }}
-        ref: master
-        clean: true
+    # - uses: actions/checkout@v1
+    #   with:
+    #     token: ${{ secrets.GITHUB_TOKEN }}
+    #     ref: master
+    #     clean: true
 
     - name: Update Release File
       env:
