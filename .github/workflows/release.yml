@@ -8,7 +8,7 @@ on:
 
 
 jobs:
-  build:
+  deploy:
     runs-on: ubuntu-latest
 
     steps:
@@ -22,5 +22,5 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         USER_REPO_NAME: ${{ github.repository }}
       run: |
-        snap install hub --classic
+        sudo snap install hub --classic
         python .github/workflows/tasks.py release
