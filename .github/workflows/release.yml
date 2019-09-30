@@ -17,10 +17,27 @@ jobs:
       uses: actions/setup-python@v1
       with:
         python-version: 3.7
-    - name: Release
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        USER_REPO_NAME: ${{ github.repository }}
-      run: |
-        sudo snap install hub --classic
-        python .github/workflows/tasks.py release
+
+    - name: Package
+      id: pkg
+      run: python .github/workflows/tasks.py package
+
+    - name: Dump steps context
+        env:
+          STEPS_CONTEXT: ${{ toJson(steps) }}
+        run: echo "$STEPS_CONTEXT"
+
+    # - name: Release Assets
+    #   uses: softprops/action-gh-release@v1
+    #   with:
+    #     name: Release version ${{ steps.pkg.outputs}}
+    #     body: Version $VERSION
+    #     files: ../assets/*
+    #   env:
+    #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+    # - name: Update Release File
+    #   env:
+    #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    #     USER_REPO_NAME: ${{ github.repository }}
+    #   run: python .github/workflows/tasks.py update_release_file

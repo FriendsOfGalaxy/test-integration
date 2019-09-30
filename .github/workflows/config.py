@@ -12,7 +12,7 @@ def build():
     pass
 
 
-def deploy(output):
+def package(output):
     """Generate zip assests in output path."""
 
     if os.path.exists(output):
