@@ -42,8 +42,8 @@ def release():
     print('preparing deploy files')
     asset_paths = config.deploy('../build')
 
-    _run(
-        f'hub release create {version_tag}'
+    _run('hub',
+        f'release create {version_tag}'
         f'-m {RELEASE_TITLE.format(version_tag)}\n{RELEASE_DESC.format(version_tag)}'
         f'-a {" -a ".join(asset_paths)}'
     )
