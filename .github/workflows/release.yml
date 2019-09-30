@@ -20,21 +20,19 @@ jobs:
 
     - name: Package
       id: pkg
-      run: python .github/workflows/tasks.py package
+      run: |
+        python .github/workflows/tasks.py package > ../version
+        echo $(cat ../version)
 
-    - name: Dump steps context
+    - name: Release Assets
+      uses: softprops/action-gh-release@v1
+      with:
+        name: Release version $(cat ../version)
+        body: Version $VERSION
+        files: ../assets/*
       env:
-        STEPS_CONTEXT: ${{ toJson(steps) }}
-      run: echo "$STEPS_CONTEXT"
-
-    # - name: Release Assets
-    #   uses: softprops/action-gh-release@v1
-    #   with:
-    #     name: Release version ${{ steps.pkg.outputs}}
-    #     body: Version $VERSION
-    #     files: ../assets/*
-    #   env:
-    #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        VERSION: ${cat ../version}
 
     # - name: Update Release File
     #   env:

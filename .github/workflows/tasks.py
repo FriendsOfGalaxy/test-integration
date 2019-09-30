@@ -15,6 +15,7 @@ RELEASE_FILE ="current_version.json"
 RELEASE_FILE_COMMIT_MESSAGE = "Updated current_version.json"
 FOG = 'FriendsOfGalaxy'
 BUILD_DIR = os.path.join('..', 'assets')
+TMP_VERSION_FILE = os.path.join('..', 'version')
 
 
 def _run(*args, **kwargs):
@@ -33,8 +34,12 @@ def load_version():
 
 def package():
     """Setup env variable VERSION and """
+    version_tag = load_version()
     asset_paths = config.package(BUILD_DIR)
-    return load_version()
+
+    os.environ['VERSION'] = version_tag
+    # dump inategration version to use in release
+    print(version_tag, end='')
 
     # # Alternatively - release with hub
     # _run('hub', 'release', 'create', version_tag,
