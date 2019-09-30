@@ -73,7 +73,7 @@ def update_release_file():
 
 if __name__ == "__main__":
     task = sys.argv[1]
-    if task == 'release':
+    if task == 'package':
         package()
     if task == 'update_release_file':
         update_release_file()
