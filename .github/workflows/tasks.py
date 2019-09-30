@@ -14,12 +14,12 @@ RELEASE_FILE ="current_version.json"
 RELEASE_FILE_COMMIT_MESSAGE = "Updated current_version.json"
 FOG = 'FriendsOfGalaxy'
 BUILD_DIR = os.path.join('..', 'assets')
+RELEASE_INFO_FILE = os.path.join('..', 'release_info')
 
 
 def _run(*args, **kwargs):
     kwargs.setdefault("check", True)
-    # kwargs.setdefault("capture_output", False)
-    kwargs.setdefault('stdout', subprocess.PIPE, 'stderr', subprocess.STDOUT)
+    kwargs.setdefault("capture_output", False)
     cmd = list(args)
     print('executing', cmd)
     return subprocess.run(cmd, **kwargs)
@@ -36,15 +36,18 @@ def package():
     version_tag = load_version()
     asset_paths = config.package(BUILD_DIR)
 
+    os.environ['VERSION'] = version_tag
     # _run('git', 'tag', version_tag)
     # # to pass arguments to release step
-    # print(RELEASE_MESSAGE.format(tag=version_tag), end='')
+    info = RELEASE_MESSAGE.format(tag=version_tag)
+    print(info)
 
-    # Or release with hub
-    _run('hub', 'release', 'create', version_tag,
-        '-m', RELEASE_MESSAGE.format(tag=version_tag),
-        '-a', " -a ".join(asset_paths)
-    )
+
+    # # Or release with hub
+    # _run('hub', 'release', 'create', version_tag,
+    #     '-m', RELEASE_MESSAGE.format(tag=version_tag),
+    #     '-a', " -a ".join(asset_paths)
+    # )
 
 def update_release_file():
     token = os.environ['GITHUB_TOKEN']

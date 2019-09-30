@@ -19,10 +19,12 @@ jobs:
         python-version: 3.7
 
     - name: Release
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: |
         sudo snap install hub --classic
-        hub --help
-        python .github/workflows/tasks.py package > ../release_info.txt
+        python .github/workflows/tasks.py package > ../release_info
+        hub release create $VERSION -F ../release_info -a ../build/windows.zip
 
     # - name: Release Assets
     #   uses: softprops/action-gh-release@v1
