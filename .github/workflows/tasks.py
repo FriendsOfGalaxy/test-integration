@@ -9,13 +9,11 @@ sys.path.insert(0, '.github/workflow')
 import config
 
 
-RELEASE_TITLE = "Release version {}"
-RELEASE_DESC = "Version {}"
+RELEASE_MESSAGE = "Release version {tag}\n\nVersion {tag}"
 RELEASE_FILE ="current_version.json"
 RELEASE_FILE_COMMIT_MESSAGE = "Updated current_version.json"
 FOG = 'FriendsOfGalaxy'
 BUILD_DIR = os.path.join('..', 'assets')
-TMP_VERSION_FILE = os.path.join('..', 'version')
 
 
 def _run(*args, **kwargs):
@@ -37,16 +35,15 @@ def package():
     version_tag = load_version()
     asset_paths = config.package(BUILD_DIR)
 
-    os.environ['VERSION'] = version_tag
-    # dump inategration version to use in release
-    print(version_tag, end='')
+    # _run('git', 'tag', version_tag)
+    # # to pass arguments to release step
+    # print(RELEASE_MESSAGE.format(tag=version_tag), end='')
 
-    # # Alternatively - release with hub
-    # _run('hub', 'release', 'create', version_tag,
-    #     '-m', RELEASE_TITLE.format(version_tag),
-    #     '-m', RELEASE_DESC.format(version_tag),
-    #     '-a', " -a ".join(asset_paths)
-    # )
+    # Or release with hub
+    _run('hub', 'release', 'create', version_tag,
+        '-m', RELEASE_MESSAGE.format(tag=version_tag),
+        '-a', " -a ".join(asset_paths)
+    )
 
 def update_release_file():
     token = os.environ['GITHUB_TOKEN']

@@ -18,24 +18,23 @@ jobs:
       with:
         python-version: 3.7
 
-    - name: Package
-      id: pkg
+    - name: Release
       run: |
-        python .github/workflows/tasks.py package > ../version
-        echo $(cat ../version)
+        sudo snap install hub --classic
+        python .github/workflows/tasks.py package > ../release_info.txt
 
-    - name: Release Assets
-      uses: softprops/action-gh-release@v1
-      with:
-        name: Release version $(cat ../version)
-        body: Version $VERSION
-        files: ../assets/*
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        VERSION: ${cat ../version}
-
-    # - name: Update Release File
+    # - name: Release Assets
+    #   uses: softprops/action-gh-release@v1
+    #   with:
+    #     name: Release version $(cat ../version)
+    #     file: Version $VERSION
+    #     files: ../assets/*
     #   env:
     #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-    #     USER_REPO_NAME: ${{ github.repository }}
-    #   run: python .github/workflows/tasks.py update_release_file
+    #     VERSION: ${cat ../version}
+
+    - name: Update Release File
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        USER_REPO_NAME: ${{ github.repository }}
+      run: python .github/workflows/tasks.py update_release_file
