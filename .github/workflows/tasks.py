@@ -85,6 +85,7 @@ def update_release_file():
     _run('git', 'remote', 'set-url', 'origin', f'https://{FOG}:{token}@github.com/{user_repo_name}.git')
     _run('git', 'add', RELEASE_FILE)
     _run('git', 'commit', '-m', RELEASE_FILE_COMMIT_MESSAGE)
+    _run('git', 'checkout', 'origin', 'master')
     _run('git', 'push', 'origin', 'master')
 
 
