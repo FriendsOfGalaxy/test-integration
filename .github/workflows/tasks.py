@@ -42,12 +42,11 @@ def package():
     info = RELEASE_MESSAGE.format(tag=version_tag)
     print(info)
 
-
-    # # Or release with hub
-    # _run('hub', 'release', 'create', version_tag,
-    #     '-m', RELEASE_MESSAGE.format(tag=version_tag),
-    #     '-a', " -a ".join(asset_paths)
-    # )
+    # Release with hub
+    _run('hub', 'release', 'create', version_tag,
+        '-m', RELEASE_MESSAGE.format(tag=version_tag),
+        '-a', " -a ".join(asset_paths)
+    )
 
 def update_release_file():
     token = os.environ['GITHUB_TOKEN']
