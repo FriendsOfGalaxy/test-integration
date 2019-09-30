@@ -22,6 +22,6 @@ def deploy(output):
     zip_names = ['windows', 'macos']
     for zip_name in zip_names:
         asset = os.path.join(output, zip_name)
-        shutil.make_archive(asset, 'zip', root_dir=config.SRC, base_dir='.')
+        shutil.make_archive(asset, 'zip', root_dir=SRC, base_dir='.')
 
     return [os.path.join(output, name + '.zip') for name in asset_filenames]
