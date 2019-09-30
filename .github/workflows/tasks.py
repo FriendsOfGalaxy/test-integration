@@ -22,7 +22,12 @@ def _run(*args, **kwargs):
     kwargs.setdefault("capture_output", False)
     cmd = list(args)
     print('executing', cmd)
-    return subprocess.run(cmd, **kwargs)
+    try:
+        out = subprocess.run(cmd, **kwargs)
+    except subprocess.CalledProcessError as e:
+        print(e.output)
+        raise
+    return out
 
 
 def load_version():
