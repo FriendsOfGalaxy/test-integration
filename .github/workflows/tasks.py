@@ -36,11 +36,11 @@ def release():
     user_repo_name = os.environ['USER_REPO_NAME']
 
     version_tag = load_version()
-    output = 'build'
 
+    # parent dir in case SRC is curr dir
+    output = os.path.join('..', 'build')
     print('preparing deploy files')
-    asset_filenames = config.deploy(output)
-    asset_paths = [os.path.join(output, name) for name in asset_filenames]
+    asset_paths = config.deploy('../build')
 
     _run(
         f'hub release create {version_tag}'
@@ -49,7 +49,8 @@ def release():
     )
 
     assets = []
-    for filename in asset_filenames:
+    for filename in os.path.basename(asset_paths):
+        print(filename)
         url = f"https://github.com/{user_repo_name}/releases/download/{version_tag}/{filename}"
         asset = {
             "browser_download_url": url,
