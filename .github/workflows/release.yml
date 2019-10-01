@@ -19,20 +19,14 @@ jobs:
       with:
         python-version: 3.7
 
-    # - name: Install hub
-    #   uses: geertvdc/setup-hub@master
+    - name: Install hub
+      uses: geertvdc/setup-hub@master
 
-    # - name: Release
-    #   env:
-    #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-    #   run: |
-    #     python .github/workflows/tasks.py release
-
-    # - uses: actions/checkout@v1
-    #   with:
-    #     token: ${{ secrets.GITHUB_TOKEN }}
-    #     ref: master
-    #     clean: true
+    - name: Release
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      run: |
+        python .github/workflows/tasks.py release
 
     - name: Update Release File
       env:
