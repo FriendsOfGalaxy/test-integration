@@ -2,17 +2,27 @@ name: Release
 
 on:
   pull_request:
-    types: [closed, synchronize]  # debug
-    # branches:
-      # - master
-
+    types: [closed]
 
 jobs:
-  deploy:
-    runs-on: ubuntu-latest
 
+  debug:
+    runs-on: ubuntu-18.04
     steps:
+      - name: Show context info
+        env:
+          GITHUB: ${{ toJson(github) }}
+        run: |
+          echo "$GITHUB"
+
+  deploy:
+    if: github.base_ref == 'master' && github.event.pull_request.merged == true
+    runs-on: ubuntu-18.04
+    steps:
+
     - uses: actions/checkout@v1
+      with:
+        ref: master
 
     - name: Set up Python 3.7
       uses: actions/setup-python@v1
