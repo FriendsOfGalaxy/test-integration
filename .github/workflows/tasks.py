@@ -44,8 +44,7 @@ def release():
     config.package(BUILD_DIR)
 
     asset_cmd = []
-    for _, _, filenames in os.walk(BUILD_DIR):
-        break
+    _, _, filenames = next(os.walk(BUILD_DIR))
     for filename in filenames:
         asset_cmd.append('-a')
         asset_cmd.append(str(pathlib.Path(BUILD_DIR).absolute() / filename))
@@ -62,9 +61,7 @@ def update_release_file():
     version_tag = load_version()
 
     assets = []
-    for _, _, filenames in os.walk(BUILD_DIR):
-        break
-
+    _, _, filenames = next(os.walk(BUILD_DIR))
     for filename in filenames:
         url = f"https://github.com/{user_repo_name}/releases/download/{version_tag}/{filename}"
         asset = {
