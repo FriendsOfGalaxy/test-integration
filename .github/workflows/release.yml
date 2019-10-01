@@ -2,7 +2,7 @@ name: Release
 
 on:
   pull_request:
-    types: [closed, synchronized]  # debug
+    types: [closed, synchronize]  # debug
     # branches:
     #   - master
 
