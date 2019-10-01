@@ -86,6 +86,7 @@ def update_release_file():
 
     _run(f'git status')
     _run(f'git config --list')
+    _run("git log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit --date=relative")
 
     _run(f'git add {RELEASE_FILE}')
     _run(f'git commit -m {RELEASE_FILE_COMMIT_MESSAGE}')
