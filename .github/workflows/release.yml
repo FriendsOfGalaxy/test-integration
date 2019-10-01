@@ -2,13 +2,13 @@ name: Release
 
 on:
   pull_request:
-    types: [closed, synchronize]  # debug
-    # branches:
-      # - master
+    types: [closed, synchronized]  # debug
+    branche: [master]
 
 
 jobs:
   deploy:
+    if: github.event.pull_request.merged == true
     runs-on: ubuntu-latest
 
     steps:
@@ -22,14 +22,14 @@ jobs:
     - name: Install hub
       uses: geertvdc/setup-hub@master
 
-    - name: Release
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      run: |
-        python .github/workflows/tasks.py release
+    # - name: Release
+    #   env:
+    #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    #   run: |
+    #     python .github/workflows/tasks.py release
 
-    - name: Update Release File
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        USER_REPO_NAME: ${{ github.repository }}
-      run: python .github/workflows/tasks.py update_release_file
+    # - name: Update Release File
+    #   env:
+    #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    #     USER_REPO_NAME: ${{ github.repository }}
+    #   run: python .github/workflows/tasks.py update_release_file
