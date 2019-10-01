@@ -2,7 +2,7 @@
     "name": "Test Galaxy Integration",
     "platform": "generic",
     "guid": "4a0bcfb3-3d52-4c1b-bd93-028c39206449",
-    "version": "0.7",
+    "version": "0.8",
     "description": "For testing purposes",
     "author": "FriendsOfGalaxy",
     "email": "FriendsOfGalaxy@gmail.com",

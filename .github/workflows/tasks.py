@@ -84,13 +84,15 @@ def update_release_file():
     _run(f'git config user.name {FOG}')
     _run(f'git remote set-url origin https://{FOG}:{token}@github.com/{user_repo_name}.git')
 
+    # debug
     _run(f'git status')
+    _run(f'git show-ref')
     _run(f'git config --list')
-    _run("git log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit --date=relative")
+    _run(f"git log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit --date=relative")
 
     _run(f'git add {RELEASE_FILE}')
     _run(f'git commit -m {RELEASE_FILE_COMMIT_MESSAGE}')
-    _run(f'git push origin master')
+    _run(f'git push origin HEAD:master')
 
 
 if __name__ == "__main__":
