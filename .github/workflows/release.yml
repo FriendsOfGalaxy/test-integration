@@ -9,6 +9,7 @@ on:
 
 jobs:
   hello:
+    runs-on: ubuntu-latest
     steps:
       - name: Show event info
         env:
