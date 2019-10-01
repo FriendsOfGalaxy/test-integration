@@ -1,6 +1,7 @@
 """Common tasks shared between all our forks"""
 
 import os
+import shlex
 import pathlib
 import json
 import sys
@@ -20,9 +21,11 @@ RELEASE_INFO_FILE = os.path.join('..', 'release_info')
 
 
 def _run(*args, **kwargs):
+    cmd = list(args)
+    if len(cmd) == 1:
+        cmd = shlex.split(cmd[0])
     kwargs.setdefault("check", True)
     kwargs.setdefault("capture_output", False)
-    cmd = list(args)
     print('executing', cmd)
     try:
         out = subprocess.run(cmd, **kwargs)
@@ -77,14 +80,16 @@ def update_release_file():
     with open(RELEASE_FILE, 'w') as f:
         json.dump(data, f, indent=4)
 
-    _run('git', 'config', 'user.email', FOG_EMAIL)
-    _run('git', 'config', 'user.name', FOG)
-    _run('git', 'remote', 'add', 'origin', f'https://{FOG}:{token}@github.com/{user_repo_name}.git')
-    # _run('git', 'remote', 'set-url', 'origin', f'https://{FOG}:{token}@github.com/{user_repo_name}.git')
+    _run(f'git config user.email {FOG_EMAIL}')
+    _run(f'git config user.name {FOG}')
+    _run(f'git remote set-url origin https://{FOG}:{token}@github.com/{user_repo_name}.git')
 
-    _run('git', 'add', RELEASE_FILE)
-    _run('git', 'commit', '-m', RELEASE_FILE_COMMIT_MESSAGE)
-    _run('git', 'push', '-u', 'origin', 'master')
+    _run(f'git status')
+    _run(f'git config --list')
+
+    _run(f'git add {RELEASE_FILE}')
+    _run(f'git commit -m {RELEASE_FILE_COMMIT_MESSAGE}')
+    _run(f'git push origin master')
 
 
 if __name__ == "__main__":
