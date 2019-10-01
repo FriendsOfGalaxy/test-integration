@@ -3,9 +3,17 @@ name: Release
 on:
   pull_request:
     types: [closed, synchronized]  # debug
+    # branches:
+    #   - master
 
 
 jobs:
+  hello:
+    - name: Show event info
+      env:
+        EVENT: ${{ toJson(github.even) }}
+      run: echo "$EVENT"
+
   deploy:
     if: github.event.pull_request.merged == true
     runs-on: ubuntu-latest
