@@ -25,7 +25,7 @@ def _run(*args, **kwargs):
     if len(cmd) == 1:
         cmd = shlex.split(cmd[0])
     kwargs.setdefault("check", True)
-    kwargs.setdefault("capture_output", False)
+    kwargs.setdefault("capture_output", True)
     print('executing', cmd)
     try:
         out = subprocess.run(cmd, **kwargs)
@@ -63,13 +63,15 @@ def update_release_file():
     user_repo_name = os.environ['USER_REPO_NAME']
     version_tag = load_version()
 
+    proc = _run(f'hub release show --show-downloads {version_tag}', text=True)
+    lines = proc.stdout.split()
+    zip_urls = [ln for ln in lines if ln.endswith('.zip')]
+
     assets = []
-    _, _, filenames = next(os.walk(BUILD_DIR))
-    for filename in filenames:
-        url = f"https://github.com/{user_repo_name}/releases/download/{version_tag}/{filename}"
+    for url in zip_urls:
         asset = {
             "browser_download_url": url,
-            "name": filename
+            "name": url.split('/')[-1]
         }
         assets.append(asset)
 
@@ -83,12 +85,6 @@ def update_release_file():
     _run(f'git config user.email {FOG_EMAIL}')
     _run(f'git config user.name {FOG}')
     _run(f'git remote set-url origin https://{FOG}:{token}@github.com/{user_repo_name}.git')
-
-    # debug
-    _run(f'git status')
-    _run(f'git show-ref')
-    _run(f'git config --list')
-    _run(f"git log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit --date=relative")
 
     _run(f'git add {RELEASE_FILE}')
     _run(f'git commit -m {RELEASE_FILE_COMMIT_MESSAGE}')
