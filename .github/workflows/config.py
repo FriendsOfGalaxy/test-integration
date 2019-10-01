@@ -3,7 +3,12 @@ import shutil
 
 # -------- consts ---------
 
-SRC = '.'  # repo root
+# paths relative to repository root
+SRC = '.'
+MANIFEST_LOCATION = 'manifest.json'
+
+UPSTREAM = 'https://github.com/FriendsOfGalaxyTester/test-integration'
+RELEASE_BRANCH = 'master'  # branch to be checked for new updates
 
 
 # --------- jobs -----------
