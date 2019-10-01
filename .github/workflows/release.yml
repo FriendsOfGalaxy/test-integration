@@ -2,24 +2,26 @@ name: Release
 
 on:
   pull_request:
-    types: [closed, synchronize]  # debug
+    types: [closed, synchronize]  # synchronize for debug
     # branches:
     #   - master
 
 
 jobs:
   hello:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-18.04
     steps:
-      - name: Show event info
+      - name: Show context info
         env:
           EVENT: ${{ toJson(github.event) }}
-        run: echo "$EVENT"
+          GITHUB: ${{ toJson(github) }}
+        run: |
+          echo "$EVENT"
+          echo "$GITHUB"
 
   deploy:
     if: github.event.pull_request.merged == true
-    runs-on: ubuntu-latest
-
+    runs-on: ubuntu-18.04
     steps:
     - uses: actions/checkout@v1
 
