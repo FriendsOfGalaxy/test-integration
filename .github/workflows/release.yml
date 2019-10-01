@@ -13,7 +13,7 @@ jobs:
     steps:
       - name: Show event info
         env:
-          EVENT: ${{ toJson(github.even) }}
+          EVENT: ${{ toJson(github.event) }}
         run: echo "$EVENT"
 
   deploy:
