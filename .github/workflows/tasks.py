@@ -111,7 +111,7 @@ def _sync_pr():
         _run(f'git push -u origin {FOG_PR_BRANCH}')
 
     print(f'merging latest release from upstream/{config.RELEASE_BRANCH}')
-    _run(f'git merge --no-commit --no-ff upstream/{config.RELEASE_BRANCH}')
+    _run(f'git merge --no-commit --no-ff --ours upstream/{config.RELEASE_BRANCH}')
 
     print('excluding reserved files')
     # reset .github/workflows content
