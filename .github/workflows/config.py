@@ -3,13 +3,12 @@ import shutil
 
 # -------- consts ---------
 
-# paths relative to repository root
-SRC = '.'
-MANIFEST_LOCATION = 'manifest.json'
-
+# original repository url from github
 UPSTREAM = 'https://github.com/FriendsOfGalaxyTester/test-integration'
-RELEASE_BRANCH = 'master'  # branch to be checked for new updates
-
+# branch to be checked for new updates
+RELEASE_BRANCH = 'master'
+# integration source directory, where the manifest.json is placed; relative to root repo dir
+SRC = '.'
 
 # --------- jobs -----------
 
@@ -19,7 +18,6 @@ def build():
 
 def package(output):
     """Generate zip assests in output path."""
-
     if os.path.exists(output):
         shutil.rmtree(output)
     os.makedirs(output)

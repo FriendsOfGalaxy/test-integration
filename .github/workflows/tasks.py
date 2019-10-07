@@ -12,6 +12,7 @@ from distutils.version import StrictVersion
 sys.path.insert(0, '.github/workflow')
 import config
 
+MANIFEST_LOCATION = os.path.join(config.SRC, 'manifest.json')
 
 GITHUB = 'https://github.com'
 FOG = 'FriendsOfGalaxy'
@@ -47,7 +48,7 @@ def _run(*args, **kwargs):
 
 
 def _load_version():
-    with open(config.MANIFEST_LOCATION, 'r') as f:
+    with open(MANIFEST_LOCATION, 'r') as f:
         return json.load(f)['version']
 
 
@@ -55,7 +56,7 @@ def _load_upstream_version():
     upstream = config.UPSTREAM
     if upstream.startswith(GITHUB):
         upstream_repo = upstream.split('/', 3)[-1]
-        url = f'https://raw.githubusercontent.com/{upstream_repo}/{config.RELEASE_BRANCH}/{config.MANIFEST_LOCATION}'
+        url = f'https://raw.githubusercontent.com/{upstream_repo}/{config.RELEASE_BRANCH}/{MANIFEST_LOCATION}'
     else:
         raise NotImplementedError('other services than github not supported')
 
