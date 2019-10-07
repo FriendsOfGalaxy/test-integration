@@ -94,24 +94,24 @@ def _create_pr():
     pr_title = f"Version {version}"
     pr_message = "Sync with the original repository"
     _run(
-        f'hub pull-request --base {FOG}:{FOG_BASE_BRANCH} --head {FOG}:{PR_BRANCH} '
+        f'hub pull-request --base {FOG}:{FOG_BASE_BRANCH} --head {FOG}:{FOG_PR_BRANCH} '
         f'-m "{pr_title}" -m "{pr_message}" --labels autoupdate'
     )
 
 
 def _sync_pr():
-    """ Synchronize upstream changes to origin/PR_BRANCH
+    """ Synchronize upstream changes to origin/FOG_PR_BRANCH
     """
     _run('git fetch upstream')
 
     try:
-        _run(f'git checkout -b {PR_BRANCH} --track origin/{PR_BRANCH}')
+        _run(f'git checkout -b {FOG_PR_BRANCH} --track origin/{FOG_PR_BRANCH}')
     except subprocess.CalledProcessError:
-        _run(f'git checkout -b {PR_BRANCH}')
-        _run(f'git push -u origin {PR_BRANCH}')
+        _run(f'git checkout -b {FOG_PR_BRANCH}')
+        _run(f'git push -u origin {FOG_PR_BRANCH}')
 
     print(f'merging latest release from upstream/{config.RELEASE_BRANCH}')
-    _run(f'git merge --no-commit --no-ff upstream/{config.RELEASE_BRANCH}')
+    _run(f'git merge --no-commit --no-ff --ours upstream/{config.RELEASE_BRANCH}')
 
     print('excluding reserved files')
     # reset .github/workflows content
@@ -123,7 +123,7 @@ def _sync_pr():
     except subprocess.CalledProcessError:
         raise RuntimeError('Committing has failed')
 
-    _run(f'git push -u origin {PR_BRANCH}')
+    _run(f'git push -u origin {FOG_PR_BRANCH}')
 
 
 def sync():
@@ -134,7 +134,7 @@ def sync():
     upstream_version = _load_upstream_version()
     if StrictVersion(upstream_version) <= StrictVersion(pr_branch_version):
         raise RuntimeError(f'No new version to be sync to.'
-                           f'Upstream: {upstream_version}, fork {PR_BRANCH}: {pr_branch_version}')
+                           f'Upstream: {upstream_version}, fork {FOG_PR_BRANCH}: {pr_branch_version}')
 
     _sync_pr()
     if not _is_pr_open():
