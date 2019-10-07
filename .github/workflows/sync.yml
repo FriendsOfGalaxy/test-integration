@@ -4,7 +4,7 @@ on:
   # pull_request:  # debug
   #   types: [synchronize]
   schedule:
-    - cron:  '*/10 * * * *'  # runs every /x minutes
+    - cron:  '*/4 * * * *'  # runs every /x minutes
 
 jobs:
   sync:

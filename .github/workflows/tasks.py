@@ -94,7 +94,7 @@ def _create_pr():
     )
 
 
-def _sync_pr(release_branch):
+def _sync_pr():
     """ Synchronize upstream changes to origin/PR_BRANCH
     """
     _run('git fetch upstream')
@@ -107,8 +107,8 @@ def _sync_pr(release_branch):
     else:
         _run(f'git pull origin {PR_BRANCH}')
 
-    print(f'merging latest release branch {release_branch}')
-    _run(f'git merge --no-commit --no-ff upstream/{release_branch}')
+    print(f'merging latest release from upstream/{config.RELEASE_BRANCH}')
+    _run(f'git merge --no-commit --no-ff upstream/{config.RELEASE_BRANCH}')
 
     print('excluding reserved files')
     # reset .github/workflows content
@@ -128,7 +128,7 @@ def sync():
     upstream_version = _load_upstream_version()
 
     if StrictVersion(upstream_version) > StrictVersion(pr_branch_version):
-        _sync_pr(config.RELEASE_BRANCH)
+        _sync_pr()
         if not _is_pr_open():
             _create_pr()
     else:
