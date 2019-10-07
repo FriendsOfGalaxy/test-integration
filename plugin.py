@@ -1,3 +1,3 @@
 import subprocess
 
-subprocess.run('echo "Hello world, new update v11"')
+subprocess.run('echo "Hello world, new update v12"')
