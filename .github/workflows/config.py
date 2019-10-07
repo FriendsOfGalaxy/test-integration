@@ -16,7 +16,7 @@ def build():
     pass
 
 
-def package(output):
+def pack(output):
     """Generate zip assests in output path."""
     if os.path.exists(output):
         shutil.rmtree(output)
