@@ -12,14 +12,19 @@ from distutils.version import StrictVersion
 sys.path.insert(0, '.github/workflow')
 import config
 
+GITHUB = 'https://github.com'
 MANIFEST_LOCATION = os.path.join(config.SRC, 'manifest.json')
 
-GITHUB = 'https://github.com'
+if config.UPSTREAM.startswith(GITHUB):
+    UPSTREAM_USER_REPO = config.UPSTREAM.split('/', 3)[-1]
+else:
+    raise NotImplementedError(f'UPSTREAM does not starts with {GITHUB}. Other services not supported')
+
 FOG = 'FriendsOfGalaxy'
 FOG_EMAIL = 'FriendsOfGalaxy@gmail.com'
 
-FOG_BASE_BRANCH = 'master'
-PR_BRANCH = 'autoupdate'
+FOG_BASE = 'master'
+FOG_PR_BRANCH = 'autoupdate'
 PATHS_TO_EXCLUDE = ['README.md', 'current_version.json']
 
 RELEASE_MESSAGE = "Release version {tag}\n\nVersion {tag}"
@@ -54,13 +59,7 @@ def _load_version():
 
 
 def _load_upstream_version():
-    upstream = config.UPSTREAM
-    if upstream.startswith(GITHUB):
-        upstream_repo = upstream.split('/', 3)[-1]
-        url = f'https://raw.githubusercontent.com/{upstream_repo}/{config.RELEASE_BRANCH}/{MANIFEST_LOCATION}'
-    else:
-        raise NotImplementedError('other services than github not supported')
-
+    url = f'https://raw.githubusercontent.com/{UPSTREAM_USER_REPO}/{config.RELEASE_BRANCH}/{MANIFEST_LOCATION}'
     resp = urllib.request.urlopen(url)
     upstream_manifest = json.loads(resp.read().decode('utf-8'))
     return upstream_manifest['version']
@@ -79,9 +78,14 @@ def _fog_git_init(upstream=None):
 
 
 def _is_pr_open():
-    proc = _run(f'hub pr list -s open -b {FOG_BASE_BRANCH} -h {PR_BRANCH}')
-    print('pull requests:', proc.stdout, bool(proc.stdout))
-    return bool(proc.stdout)  # empty output means no PR open
+    repository = os.environ['REPOSITORY']
+    url = f"https://api.github.com/repos/{repository}/pulls?base={FOG_BASE}&head={FOG}:{FOG_PR_BRANCH}&state=open"
+    print(url)
+    resp = urllib.request.urlopen(url)
+    prs = json.loads(resp.read().decode('utf-8'))
+    if len(prs):
+        return True
+    return False
 
 
 def _create_pr():
@@ -128,10 +132,9 @@ def sync():
 
     pr_branch_version = _load_version()
     upstream_version = _load_upstream_version()
-
     if StrictVersion(upstream_version) <= StrictVersion(pr_branch_version):
-        print(f'No new version to be sync to. Upstream ver. {upstream_version}, fork PR ver. {pr_branch_version}')
-        return
+        raise RuntimeError(f'No new version to be sync to.'
+                           f'Upstream: {upstream_version}, fork {PR_BRANCH}: {pr_branch_version}')
 
     _sync_pr()
     if not _is_pr_open():

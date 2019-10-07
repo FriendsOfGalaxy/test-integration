@@ -3,7 +3,7 @@ import shutil
 
 # -------- consts ---------
 
-# original repository url from github
+# url of original repository from github
 UPSTREAM = 'https://github.com/FriendsOfGalaxyTester/test-integration'
 # branch to be checked for new updates
 RELEASE_BRANCH = 'master'
