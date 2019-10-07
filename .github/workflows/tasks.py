@@ -40,8 +40,9 @@ def _run(*args, **kwargs):
     try:
         out = subprocess.run(cmd, **kwargs)
     except subprocess.CalledProcessError as e:
-        print('><', e.output, e.stderr)
-        raise
+        err_str = e.output + '\n' + e.stderr
+        print('><', err_str)
+        raise RuntimeError(err_str)
     if out.stdout:
         print('>>', out.stdout)
     return out
@@ -104,8 +105,6 @@ def _sync_pr():
     except subprocess.CalledProcessError:
         _run(f'git checkout -b {PR_BRANCH}')
         _run(f'git push -u origin {PR_BRANCH}')
-    else:
-        _run(f'git pull origin {PR_BRANCH}')
 
     print(f'merging latest release from upstream/{config.RELEASE_BRANCH}')
     _run(f'git merge --no-commit --no-ff upstream/{config.RELEASE_BRANCH}')
@@ -114,10 +113,13 @@ def _sync_pr():
     # reset .github/workflows content
     # _run('rm -r ./github/workflows/*.yml')
     _run(f'git checkout origin/{FOG_BASE_BRANCH} -- {" ".join(PATHS_TO_EXCLUDE)}')
-    _run(f'git status')
 
-    proc = _run(f'git commit -m "Merge upstream"')
-    _run(f'git push origin {PR_BRANCH}')
+    try:
+        _run(f'git commit -m "Merge upstream"')
+    except subprocess.CalledProcessError:
+        raise RuntimeError('Committing has failed')
+
+    _run(f'git push -u origin {PR_BRANCH}')
 
 
 def sync():
@@ -127,12 +129,13 @@ def sync():
     pr_branch_version = _load_version()
     upstream_version = _load_upstream_version()
 
-    if StrictVersion(upstream_version) > StrictVersion(pr_branch_version):
-        _sync_pr()
-        if not _is_pr_open():
-            _create_pr()
-    else:
-        print(f'No new version found in upstream {UPSTREAM} to be sync')
+    if StrictVersion(upstream_version) <= StrictVersion(pr_branch_version):
+        print(f'No new version to be sync to. Upstream ver. {upstream_version}, fork PR ver. {pr_branch_version}')
+        return
+
+    _sync_pr()
+    if not _is_pr_open():
+        _create_pr()
 
 
 def release():
