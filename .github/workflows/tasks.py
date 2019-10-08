@@ -131,7 +131,7 @@ def sync():
     pr_branch_version = _load_version()
     upstream_version = _load_upstream_version()
     if StrictVersion(upstream_version) <= StrictVersion(pr_branch_version):
-        raise RuntimeError(f'No new version to be sync to.'
+        raise RuntimeError('No new version to be sync to. ' \
                            f'Upstream: {upstream_version}, fork {FOG_PR_BRANCH}: {pr_branch_version}')
 
     _sync_pr()
