@@ -1,8 +1,10 @@
 """Common tasks shared between all our forks"""
+
 import os
 import sys
 import json
 import shlex
+import shutil
 import pathlib
 import subprocess
 import urllib.request
@@ -25,6 +27,10 @@ FOG_EMAIL = 'FriendsOfGalaxy@gmail.com'
 FOG_BASE = 'master'
 FOG_PR_BRANCH = 'autoupdate'
 PATHS_TO_EXCLUDE = ['README.md', 'current_version.json']
+# remote names mathcing `hub` heuristics: https://github.com/github/hub/issues/2296
+UPSTREAM_REMOTE = '_upstream'
+ORIGIN_REMOTE = 'origin'
+
 
 RELEASE_MESSAGE = "Release version {tag}\n\nVersion {tag}"
 RELEASE_FILE ="current_version.json"
@@ -71,9 +77,9 @@ def _fog_git_init(upstream=None):
 
     _run(f'git config user.name {FOG}')
     _run(f'git config user.email {FOG_EMAIL}')
-    _run(f'git remote set-url origin {origin}')
+    _run(f'git remote set-url {ORIGIN_REMOTE} {origin}')
     if upstream is not None:
-        _run(f'git remote add upstream {upstream}')
+        _run(f'git remote add {UPSTREAM_REMOTE} {upstream}')
 
 
 def _is_pr_open():
@@ -98,24 +104,24 @@ def _create_pr():
 
 
 def _sync_pr():
-    """ Synchronize upstream changes to origin/FOG_PR_BRANCH
+    """ Synchronize upstream changes to ORIGIN_REMOTE/FOG_PR_BRANCH
     """
-    _run('git fetch upstream')
+    _run(f'git fetch {UPSTREAM_REMOTE}')
 
     try:
-        _run(f'git checkout -b {FOG_PR_BRANCH} --track origin/{FOG_PR_BRANCH}')
+        _run(f'git checkout -b {FOG_PR_BRANCH} --track {ORIGIN_REMOTE}/{FOG_PR_BRANCH}')
     except subprocess.CalledProcessError:  # no such branch on remote
         _run(f'git checkout -b {FOG_PR_BRANCH}')
-        _run(f'git push -u origin {FOG_PR_BRANCH}')
+        _run(f'git push -u {ORIGIN_REMOTE} {FOG_PR_BRANCH}')
 
-    print(f'merging latest release from upstream/{config.RELEASE_BRANCH}')
-    _run(f'git merge --no-commit --no-ff -s recursive -Xours upstream/{config.RELEASE_BRANCH}')
+    print(f'merging latest release from {UPSTREAM_REMOTE}/{config.RELEASE_BRANCH}')
+    _run(f'git merge --no-commit --no-ff -s recursive -Xours {UPSTREAM_REMOTE}/{config.RELEASE_BRANCH}')
 
     print('checkout reserved files')
-    _run(f'git checkout origin/{FOG_BASE} -- {" ".join(PATHS_TO_EXCLUDE)}')
+    _run(f'git checkout {ORIGIN_REMOTE}/{FOG_BASE} -- {" ".join(PATHS_TO_EXCLUDE)}')
 
     _run(f'git commit -m "Merge upstream"')
-    _run(f'git push origin {FOG_PR_BRANCH}')
+    _run(f'git push {ORIGIN_REMOTE} {FOG_PR_BRANCH}')
 
 
 def sync():
@@ -194,7 +200,7 @@ def update_release_file():
 
     _run(f'git add {RELEASE_FILE}')
     _run(f'git commit -m {RELEASE_FILE_COMMIT_MESSAGE}')
-    _run(f'git push origin HEAD:{FOG_BASE}')
+    _run(f'git push {ORIGIN_REMOTE} HEAD:{FOG_BASE}')
 
 
 if __name__ == "__main__":
