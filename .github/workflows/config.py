@@ -1,6 +1,3 @@
-import os
-import shutil
-
 # -------- consts ---------
 
 # url of original repository from github
@@ -12,17 +9,6 @@ SRC = '.'
 
 # --------- jobs -----------
 
-def build():
-    pass
-
-
-def package(output):
-    """Generate zip assests in output path."""
-    if os.path.exists(output):
-        shutil.rmtree(output)
-    os.makedirs(output)
-
-    zip_names = ['windows', 'macos']
-    for zip_name in zip_names:
-        asset = os.path.join(output, zip_name)
-        shutil.make_archive(asset, 'zip', root_dir=SRC, base_dir='.')
+# if pack job is not defined, simple zip files will be produced from SRC
+# def pack(output):
+#   pass

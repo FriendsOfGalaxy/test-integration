@@ -1,5 +1,4 @@
 """Common tasks shared between all our forks"""
-
 import os
 import sys
 import json
@@ -38,17 +37,17 @@ def _run(*args, **kwargs):
     cmd = list(args)
     if len(cmd) == 1:
         cmd = shlex.split(cmd[0])
-    kwargs.setdefault("check", True)
     kwargs.setdefault("capture_output", True)
     kwargs.setdefault("text", True)
     print('executing', cmd)
+    out = subprocess.run(cmd, **kwargs)
     try:
-        out = subprocess.run(cmd, **kwargs)
+        out.check_returncode()
     except subprocess.CalledProcessError as e:
         err_str = e.output + '\n' + e.stderr
         print('><', err_str)
-        raise RuntimeError(err_str)
-    if out.stdout:
+        raise
+    else:
         print('>>', out.stdout)
     return out
 
@@ -80,7 +79,6 @@ def _fog_git_init(upstream=None):
 def _is_pr_open():
     repository = os.environ['REPOSITORY']
     url = f"https://api.github.com/repos/{repository}/pulls?base={FOG_BASE}&head={FOG}:{FOG_PR_BRANCH}&state=open"
-    print(url)
     resp = urllib.request.urlopen(url)
     prs = json.loads(resp.read().decode('utf-8'))
     if len(prs):
@@ -94,7 +92,7 @@ def _create_pr():
     pr_title = f"Version {version}"
     pr_message = "Sync with the original repository"
     _run(
-        f'hub pull-request --base {FOG}:{FOG_BASE_BRANCH} --head {FOG}:{FOG_PR_BRANCH} '
+        f'hub pull-request --base {FOG}:{FOG_BASE} --head {FOG}:{FOG_PR_BRANCH} '
         f'-m "{pr_title}" -m "{pr_message}" --labels autoupdate'
     )
 
@@ -106,24 +104,18 @@ def _sync_pr():
 
     try:
         _run(f'git checkout -b {FOG_PR_BRANCH} --track origin/{FOG_PR_BRANCH}')
-    except subprocess.CalledProcessError:
+    except subprocess.CalledProcessError:  # no such branch on remote
         _run(f'git checkout -b {FOG_PR_BRANCH}')
         _run(f'git push -u origin {FOG_PR_BRANCH}')
 
     print(f'merging latest release from upstream/{config.RELEASE_BRANCH}')
-    _run(f'git merge --no-commit --no-ff --ours upstream/{config.RELEASE_BRANCH}')
+    _run(f'git merge --no-commit --no-ff -s recursive -Xours upstream/{config.RELEASE_BRANCH}')
 
-    print('excluding reserved files')
-    # reset .github/workflows content
-    # _run('rm -r ./github/workflows/*.yml')
-    _run(f'git checkout origin/{FOG_BASE_BRANCH} -- {" ".join(PATHS_TO_EXCLUDE)}')
+    print('checkout reserved files')
+    _run(f'git checkout origin/{FOG_BASE} -- {" ".join(PATHS_TO_EXCLUDE)}')
 
-    try:
-        _run(f'git commit -m "Merge upstream"')
-    except subprocess.CalledProcessError:
-        raise RuntimeError('Committing has failed')
-
-    _run(f'git push -u origin {FOG_PR_BRANCH}')
+    _run(f'git commit -m "Merge upstream"')
+    _run(f'git push origin {FOG_PR_BRANCH}')
 
 
 def sync():
@@ -137,14 +129,33 @@ def sync():
                            f'Upstream: {upstream_version}, fork {FOG_PR_BRANCH}: {pr_branch_version}')
 
     _sync_pr()
-    if not _is_pr_open():
+    if _is_pr_open():
+        print('creating PR skipped, as it already exists')
+    else:
         _create_pr()
+
+
+def _simple_archiver(output):
+    """Generate zip assests in output path."""
+    if os.path.exists(output):
+        shutil.rmtree(output)
+    os.makedirs(output)
+
+    zip_names = ['windows', 'macos']
+    for zip_name in zip_names:
+        asset = os.path.join(output, zip_name)
+        shutil.make_archive(asset, 'zip', root_dir=config.SRC, base_dir='.')
 
 
 def release():
     """Setup env variable VERSION and """
     version_tag = _load_version()
-    config.package(BUILD_DIR)
+    try:
+        packager = config.pack
+    except AttributeError:
+        packager = _simple_archiver
+
+    packager(BUILD_DIR)
 
     asset_cmd = []
     _, _, filenames = next(os.walk(BUILD_DIR))
@@ -183,7 +194,7 @@ def update_release_file():
 
     _run(f'git add {RELEASE_FILE}')
     _run(f'git commit -m {RELEASE_FILE_COMMIT_MESSAGE}')
-    _run(f'git push origin HEAD:{FOG_BASE_BRANCH}')
+    _run(f'git push origin HEAD:{FOG_BASE}')
 
 
 if __name__ == "__main__":
