@@ -35,6 +35,7 @@ jobs:
     - name: Release
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        REPOSITORY: ${{ github.repository }}
       run: python .github/workflows/tasks.py release
 
     - name: Update Release File

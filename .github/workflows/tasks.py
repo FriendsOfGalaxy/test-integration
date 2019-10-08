@@ -24,19 +24,19 @@ else:
 FOG = 'FriendsOfGalaxy'
 FOG_EMAIL = 'FriendsOfGalaxy@gmail.com'
 
-FOG_BASE = 'master'
-FOG_PR_BRANCH = 'autoupdate'
-PATHS_TO_EXCLUDE = ['README.md', 'current_version.json']
-# remote names mathcing `hub` heuristics: https://github.com/github/hub/issues/2296
-UPSTREAM_REMOTE = '_upstream'
-ORIGIN_REMOTE = 'origin'
-
-
 RELEASE_MESSAGE = "Release version {tag}\n\nVersion {tag}"
 RELEASE_FILE ="current_version.json"
 RELEASE_FILE_COMMIT_MESSAGE = "Updated current_version.json"
 BUILD_DIR = os.path.join('..', 'assets')
 RELEASE_INFO_FILE = os.path.join('..', 'release_info')
+
+FOG_BASE = 'master'
+FOG_PR_BRANCH = 'autoupdate'
+PATHS_TO_EXCLUDE = ['README.md', RELEASE_FILE]
+# remote names mathcing `hub` heuristics: https://github.com/github/hub/issues/2296
+UPSTREAM_REMOTE = '_upstream'
+ORIGIN_REMOTE = 'origin'
+UPDATE_URL = 'https://raw.githubusercontent.com/{repository}/' + FOG_BASE + '/' + RELEASE_FILE
 
 
 def _run(*args, **kwargs):
@@ -115,7 +115,7 @@ def _sync_pr():
         _run(f'git push -u {ORIGIN_REMOTE} {FOG_PR_BRANCH}')
 
     print(f'merging latest release from {UPSTREAM_REMOTE}/{config.RELEASE_BRANCH}')
-    _run(f'git merge --no-commit --no-ff -s recursive -Xours {UPSTREAM_REMOTE}/{config.RELEASE_BRANCH}')
+    _run(f'git merge --no-commit --no-ff -s recursive -Xtheirs {UPSTREAM_REMOTE}/{config.RELEASE_BRANCH}')
 
     print('checkout reserved files')
     _run(f'git checkout {ORIGIN_REMOTE}/{FOG_BASE} -- {" ".join(PATHS_TO_EXCLUDE)}')
@@ -131,8 +131,11 @@ def sync():
     pr_branch_version = _load_version()
     upstream_version = _load_upstream_version()
     if StrictVersion(upstream_version) <= StrictVersion(pr_branch_version):
-        raise RuntimeError('No new version to be sync to. ' \
-                           f'Upstream: {upstream_version}, fork {FOG_PR_BRANCH}: {pr_branch_version}')
+        raise RuntimeError(
+            '================\n'  \
+            'No new version to be sync to. ' \
+            f'Upstream: {upstream_version}, fork {FOG_PR_BRANCH}: {pr_branch_version}'
+        )
 
     _sync_pr()
     if _is_pr_open():
@@ -147,6 +150,12 @@ def _simple_archiver(output):
         shutil.rmtree(output)
     os.makedirs(output)
 
+    # remove old current_version.json
+    try:
+        _run(f'rm -r current_version.json')
+    except subprocess.CalledProcessError:
+        pass
+
     zip_names = ['windows', 'macos']
     for zip_name in zip_names:
         asset = os.path.join(output, zip_name)
@@ -154,22 +163,30 @@ def _simple_archiver(output):
 
 
 def release():
-    """Setup env variable VERSION and """
-    version_tag = _load_version()
+    # Add update_url in manifest and
+    repo = os.environ['REPOSITORY']
+    with open(MANIFEST_LOCATION, 'r') as f:
+        manifest = json.load(f)
+    manifest['update_url'] = UPDATE_URL.format(repository=repo)
+    with open(MANIFEST_LOCATION, 'w') as f:
+        json.dump(manifest, f, indent=4)
+
+    # Run pack job
+    version_tag = manifest['version']
     try:
         packager = config.pack
     except AttributeError:
         packager = _simple_archiver
-
     packager(BUILD_DIR)
 
+    # Prepare assets
     asset_cmd = []
     _, _, filenames = next(os.walk(BUILD_DIR))
     for filename in filenames:
         asset_cmd.append('-a')
         asset_cmd.append(str(pathlib.Path(BUILD_DIR).absolute() / filename))
 
-    # Create and upload github tag and release
+    # Create and upload github tag and release with assets
     _run('hub', 'release', 'create', version_tag,
         '-m', RELEASE_MESSAGE.format(tag=version_tag),
         *asset_cmd
@@ -199,7 +216,7 @@ def update_release_file():
     _fog_git_init()
 
     _run(f'git add {RELEASE_FILE}')
-    _run(f'git commit -m {RELEASE_FILE_COMMIT_MESSAGE}')
+    _run(f'git commit -m "{RELEASE_FILE_COMMIT_MESSAGE}"')
     _run(f'git push {ORIGIN_REMOTE} HEAD:{FOG_BASE}')
 
 
