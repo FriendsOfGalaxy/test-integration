@@ -2,3 +2,5 @@
 Test integration for updates
 
 -----
+
+New update
