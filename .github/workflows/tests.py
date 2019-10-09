@@ -4,7 +4,7 @@ import sys
 import subprocess
 from distutils.version import StrictVersion
 
-sys.path.insert(0, '.github/workflow')
+sys.path.insert(0, '.fog')
 import config
 
 
