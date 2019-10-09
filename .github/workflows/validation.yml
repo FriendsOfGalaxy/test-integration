@@ -18,11 +18,14 @@ jobs:
       with:
         python-version: 3.7
 
+    - name: Download tests
+      run: curl https://raw.githubusercontent.com/FriendsOfGalaxy/galaxy-integrations-updater/master/tests.py --output ../tests.py
+
     - name: Tests
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         BASE_REF: ${{ github.base_ref }}
       run: |
         pip install pytest
-        pytest .github/workflows/tests.py
+        pytest ../tests.py
 
