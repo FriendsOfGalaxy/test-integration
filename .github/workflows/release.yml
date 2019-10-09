@@ -1,8 +1,9 @@
 name: Release
 
 on:
-  repository_dispatch
-  pull_request
+  - repository_dispatch:
+    types: []
+  - pull_request:
     types: [closed]
 
 jobs:
