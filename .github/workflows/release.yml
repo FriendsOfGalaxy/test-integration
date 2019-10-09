@@ -1,8 +1,9 @@
 name: Release
 
 on:
-  pull_request:
+  - pull_request:
     types: [closed]
+  - repository_dispatch
 
 jobs:
 
@@ -16,7 +17,8 @@ jobs:
           echo "$GITHUB"
 
   deploy:
-    if: (github.head_ref == 'autoupdate' || github.head_ref == 'manualupdate') && github.base_ref == 'master' && github.event.pull_request.merged == true
+    if: (github.event_name == 'manual_release') ||
+        ((github.head_ref == 'autoupdate' || github.head_ref == 'manualupdate') && github.base_ref == 'master' && github.event.pull_request.merged == true)
     runs-on: ubuntu-18.04
     steps:
 
