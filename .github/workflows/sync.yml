@@ -22,7 +22,9 @@ jobs:
       uses: geertvdc/setup-hub@v1.0.0
 
     - name: Download scripts
-      run: curl https://raw.githubusercontent.com/FriendsOfGalaxy/galaxy-integrations-updater/master/scripts.py --output ../scripts.py
+      run: |
+        pwd
+        curl https://raw.githubusercontent.com/FriendsOfGalaxy/galaxy-integrations-updater/master/scripts.py --output ../scripts.py
 
     - name: Check and sync to PR
       env:
