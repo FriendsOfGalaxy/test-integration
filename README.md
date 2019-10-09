@@ -3,4 +3,4 @@ Test integration for updates
 
 -----
 
-New update
+New update 2
