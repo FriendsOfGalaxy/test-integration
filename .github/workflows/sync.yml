@@ -27,6 +27,6 @@ jobs:
 
     - name: Check and sync to PR
       env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        GITHUB_TOKEN: ${{ secrets.PTOKEN }}
         REPOSITORY: ${{ github.repository }}
       run: python ../scripts.py sync
