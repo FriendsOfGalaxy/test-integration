@@ -1,3 +1,1 @@
-import subprocess
-
-subprocess.run('echo "Hello world, new update v14 !"')
+__version__ = 15
