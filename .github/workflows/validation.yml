@@ -9,7 +9,7 @@ on:
 
 jobs:
   build:
-    if: (github.event_name == 'repository_dispatch' && event.action == 'validation') ||
+    if: (github.event_name == 'repository_dispatch' && github.event.action == 'validation') ||
         (github.event_name == 'pull_request')
     runs-on: ubuntu-18.04
     steps:

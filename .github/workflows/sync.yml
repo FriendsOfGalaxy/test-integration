@@ -7,7 +7,7 @@ on:
 
 jobs:
   sync:
-    if: (github.event_name == 'repository_dispatch' && event.action == 'sync') ||
+    if: (github.event_name == 'repository_dispatch' && github.kevent.action == 'sync') ||
         (github.event_name == 'schedule')
     runs-on: ubuntu-18.04
     steps:
