@@ -27,7 +27,6 @@ jobs:
     - name: Tests
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        BASE_REF: ${{ github.base_ref }}
       run: |
         pip install pytest
         pytest ../tests.py
