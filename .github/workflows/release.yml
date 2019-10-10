@@ -17,7 +17,7 @@ jobs:
           echo "$GITHUB"
 
   deploy:
-    if: (github.event.action == 'manual_release') ||
+    if: (github.event_name == 'repository_dispatch' && github.event.action == 'release') ||
         (github.head_ref == 'autoupdate' && github.base_ref == 'master' && github.event.pull_request.merged == true)
     runs-on: ubuntu-18.04
     steps:
