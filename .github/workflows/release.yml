@@ -7,14 +7,14 @@ on:
 
 jobs:
 
-  debug:
-    runs-on: ubuntu-18.04
-    steps:
-      - name: Show context info
-        env:
-          GITHUB: ${{ toJson(github) }}
-        run: |
-          echo "$GITHUB"
+  # debug:
+  #   runs-on: ubuntu-18.04
+  #   steps:
+  #     - name: Show context info
+  #       env:
+  #         GITHUB: ${{ toJson(github) }}
+  #       run: |
+  #         echo "$GITHUB"
 
   deploy:
     if: (github.event_name == 'repository_dispatch' && github.event.action == 'release') ||
