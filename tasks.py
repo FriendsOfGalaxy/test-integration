@@ -9,7 +9,7 @@ from github import Github
 def release(c):
     token = os.environ['GITHUB_TOKEN']
     g = Github(token)
-    repo = g.get_repo('test-integration')
+    repo = g.get_user().get_repo('test-integration')
     branch = repo.default_branch
     release = repo.create_git_release(
         __version__, f"Release v{__version__}", "Autorelease",
