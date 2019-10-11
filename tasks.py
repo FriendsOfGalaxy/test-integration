@@ -6,7 +6,7 @@ from github import Github
 
 
 @task
-def release():
+def release(c):
     token = os.environ['GITHUB_TOKEN']
     g = Github(token)
     repo = g.get_repo('test-integration')
@@ -19,7 +19,7 @@ def release():
 
 
 @task
-def autoincrement():
+def autoincrement(c):
     with open('manifest.json', 'r') as f:
         manifest = json.load(f)
 
