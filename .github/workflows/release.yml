@@ -35,8 +35,12 @@ jobs:
         curl https://raw.githubusercontent.com/FriendsOfGalaxy/galaxy-integrations-updater/master/scripts.py --output ../scripts.py
 
     - name: Build
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        REPOSITORY: ${{ github.repository }}
       run: |
         python -m pip install -U pip
+        python -m pip install pip-tools
         python ../scripts.py build ../build/${{ matrix.os }}
 
     - uses: actions/upload-artifact@master
