@@ -6,16 +6,6 @@ on:
     types: [closed]
 
 jobs:
-
-  # debug:
-  #   runs-on: ubuntu-18.04
-  #   steps:
-  #     - name: Show context info
-  #       env:
-  #         GITHUB: ${{ toJson(github) }}
-  #       run: |
-  #         echo "$GITHUB"
-
   build:
     if: (github.event_name == 'repository_dispatch' && github.event.action == 'release') ||
         (github.head_ref == 'autoupdate' && github.base_ref == 'master' && github.event.pull_request.merged == true)
@@ -24,7 +14,9 @@ jobs:
         os: [macOS-10.14, windows-2019]
     runs-on: ${{ matrix.os }}
     steps:
+
     - uses: actions/checkout@v1
+
     - name: Set up Python 3.7
       uses: actions/setup-python@v1
       with:
