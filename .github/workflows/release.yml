@@ -33,7 +33,7 @@ jobs:
         python -m pip install -U pip
         python -m pip install pip-tools
         python -m pip install 'PyGithub==1.44'
-        python ../scripts.py build ../build/${{ matrix.os }}
+        python ../scripts.py build --dir ../build/${{ matrix.os }}
 
     - uses: actions/upload-artifact@master
       with:
@@ -78,7 +78,7 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         REPOSITORY: ${{ github.repository }}
-      run: python ../scripts.py release ../build/
+      run: python ../scripts.py release --dir ../build/
 
     - name: Update Release File
       env:

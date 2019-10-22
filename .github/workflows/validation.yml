@@ -35,7 +35,7 @@ jobs:
         python -m pip install -U pip
         python -m pip install pip-tools
         python -m pip install 'PyGithub==1.44'
-        python ../scripts.py build ../build/${{ matrix.os }}
+        python ../scripts.py build --dir ../build/${{ matrix.os }}
 
     - name: Tests
       env:
