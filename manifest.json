@@ -2,7 +2,7 @@
     "name": "Example plugin",
     "platform": "generic",
     "guid": "da5b2e97-6c86-4761-b6c5-712b7c7e1ba2",
-    "version": "0.48",
+    "version": "0.49",
     "description": "Example plugin",
     "author": "FriendsOfGalaxyTester",
     "email": "author@email.com",
