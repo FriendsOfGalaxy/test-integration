@@ -8,6 +8,15 @@ on:
       - autoupdate
 
 jobs:
+  debug:
+    runs-on: ubuntu-18.04
+    steps:
+      - name: Show context info
+        env:
+          GITHUB: ${{ toJson(github) }}
+        run: |
+          echo "$GITHUB"
+
   build:
     if: (github.event_name == 'pull_request') || (github.event_name == 'repository_dispatch' && github.event.action == 'validation')
     strategy:
