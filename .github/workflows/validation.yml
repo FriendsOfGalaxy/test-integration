@@ -51,6 +51,8 @@ jobs:
         python -m pip install pytest
 
     - name: Build
+      env:
+        MAILER_PASSWORD: ${{ secrets.MAILER_PASSWORD}}
       run: python ../scripts.py build --dir ../build/${{ matrix.os }}
 
     - uses: actions/upload-artifact@master

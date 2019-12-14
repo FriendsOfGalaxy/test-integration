@@ -85,7 +85,7 @@ jobs:
 
     - name: Release
       env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        MAILER_PASSWORD: ${{ secrets.MAILER_PASSWORD }}
         REPOSITORY: ${{ github.repository }}
       run: python ../scripts.py release --dir ../build/
 
