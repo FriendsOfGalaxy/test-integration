@@ -31,6 +31,3 @@ def autoincrement(c):
 
     with open('manifest.json', 'w') as f:
         json.dump(manifest, f, indent=4)
-
-    with open('plugin.py', 'w') as f:
-        f.write(f"__version__ = '{newver}'")

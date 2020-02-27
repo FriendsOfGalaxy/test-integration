@@ -1,6 +1,6 @@
-# test-integration-fork
+# update-test-integration
 
-Copyright 2019 [None](https://github.com/FriendsOfGalaxyTester)
+Copyright 2019 [FriendsOfGalaxyTester](https://github.com/FriendsOfGalaxyTester)
 
 This is a fork of the original work: https://github.com/FriendsOfGalaxyTester/test-integration. The current build was reviewed by FriendsOfGalaxy community and scanned for any vulnerabilities.
 
