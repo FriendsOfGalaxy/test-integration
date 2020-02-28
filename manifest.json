@@ -7,5 +7,6 @@
     "author": "FriendsOfGalaxyTester",
     "email": "author@email.com",
     "url": "https://github.com/FriendsOfGalaxy/test-integration",
-    "script": "plugin.py"
+    "script": "plugin.py",
+    "update_url": "https://raw.githubusercontent.com/FriendsOfGalaxy/test-integration-fork/master/current_version.json"
 }
