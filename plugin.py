@@ -26,6 +26,6 @@ class PluginExample(Plugin):
 def main():
     create_and_run_plugin(PluginExample, sys.argv)
 
-# run plugin event loop
+#  run plugin event loop
 if __name__ == "__main__":
     main()
