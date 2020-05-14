@@ -75,20 +75,20 @@ jobs:
       uses: actions/download-artifact@v2
       with:
         name: build_windows-2019
-        path: ~/build/windows
+        path: build/windows
 
     - name: download macOS build
       uses: actions/download-artifact@v2
       with:
         name: build_macOS-latest
-        path: ~/build/macos
+        path: build/macos
 
     - name: Release
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         REPOSITORY: ${{ github.repository }}
         MAILER_PASSWORD: ${{ secrets.MAILER_PASSWORD }}
-      run: python ../scripts.py release --dir ~/build/
+      run: python ../scripts.py release --dir build/
 
     - name: Update Release File
       env:
