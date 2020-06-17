@@ -23,8 +23,6 @@ class PluginExample(Plugin):
     async def authenticate(self, stored_credentials=None):
         pass
 
-    # dummy change
-
 def main():
     create_and_run_plugin(PluginExample, sys.argv)
 
